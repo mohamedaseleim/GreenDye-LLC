@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: greendye_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: greendye
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - greendye_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: greendye_backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/greendye
+      - NODE_ENV=production
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - greendye_network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: greendye_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - greendye_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: greendye_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./deployment/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - greendye_network
+
+networks:
+  greendye_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
