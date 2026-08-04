@@ -1,0 +1,10 @@
+const router=require('express').Router();
+const {protect,authorize}=require('../middleware/auth');
+const c=require('../controllers/consultationController');
+router.get('/services',c.listServices); router.get('/services/:slug',c.getService);
+router.post('/requests',protect,c.submitRequest); router.get('/requests/mine',protect,c.myRequests);
+router.post('/services',protect,authorize('admin','super_admin'),c.createService);
+router.put('/services/:id',protect,authorize('admin','super_admin'),c.updateService);
+router.get('/admin/requests',protect,authorize('admin','super_admin','project_manager'),c.listRequests);
+router.put('/admin/requests/:id/status',protect,authorize('admin','super_admin','project_manager'),c.updateRequestStatus);
+module.exports=router;
