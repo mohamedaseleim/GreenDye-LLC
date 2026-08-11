@@ -1,0 +1,132 @@
+GreenDye for Training and Consultancy - Project Structure
+=====================================
+
+GreenDye/
+│
+├── 📄 README.md                          # Main project documentation
+├── 📄 SETUP.md                           # Quick setup guide
+├── 📄 CONTRIBUTING.md                    # Contribution guidelines
+├── 📄 PROJECT_SUMMARY.md                 # Comprehensive project summary
+├── 📄 LICENSE                            # ISC License
+├── 📄 package.json                       # Root package file
+├── 📄 docker-compose.yml                 # Docker orchestration
+├── 🚫 .gitignore                         # Git ignore rules
+│
+├── 📁 backend/                           # Backend API (Node.js/Express)
+│   ├── 📄 package.json                  # Backend dependencies
+│   ├── 📄 server.js                     # Application entry point
+│   ├── 📄 seed.js                       # Sample data seeder
+│   ├── 📄 .env.example                  # Environment template
+│   ├── 📄 Dockerfile                    # Backend container
+│   │
+│   ├── 📁 config/                       # Configuration files
+│   │   └── 📄 database.js              # MongoDB connection
+│   │
+│   ├── 📁 controllers/                  # Business logic
+│   │   ├── 📄 authController.js        # Authentication
+│   │   ├── 📄 userController.js        # User management
+│   │   ├── 📄 courseController.js      # Course CRUD
+│   │   ├── �� lessonController.js      # Lesson management
+│   │   ├── 📄 quizController.js        # Quiz & assessments
+│   │   ├── 📄 enrollmentController.js  # Course enrollments
+│   │   ├── 📄 certificateController.js # Certificate generation
+│   │   ├── 📄 trainerController.js     # Trainer management
+│   │   └── 📄 verifyController.js      # Verification services
+│   │
+│   ├── 📁 middleware/                   # Express middleware
+│   │   ├── 📄 auth.js                  # JWT authentication
+│   │   └── 📄 errorHandler.js          # Error handling
+│   │
+│   ├── 📁 models/                       # MongoDB schemas
+│   │   ├── 📄 User.js                  # User model
+│   │   ├── 📄 Course.js                # Course model
+│   │   ├── 📄 Lesson.js                # Lesson model
+│   │   ├── 📄 Quiz.js                  # Quiz model
+│   │   ├── 📄 Enrollment.js            # Enrollment model
+│   │   ├── 📄 Certificate.js           # Certificate model
+│   │   └── 📄 Trainer.js               # Trainer model
+│   │
+│   └── 📁 routes/                       # API routes
+│       ├── 📄 authRoutes.js            # Auth endpoints
+│       ├── 📄 userRoutes.js            # User endpoints
+│       ├── 📄 courseRoutes.js          # Course endpoints
+│       ├── 📄 lessonRoutes.js          # Lesson endpoints
+│       ├── 📄 quizRoutes.js            # Quiz endpoints
+│       ├── 📄 enrollmentRoutes.js      # Enrollment endpoints
+│       ├── 📄 certificateRoutes.js     # Certificate endpoints
+│       ├── 📄 trainerRoutes.js         # Trainer endpoints
+│       ├── 📄 verifyRoutes.js          # Verification endpoints
+│       ├── 📄 forumRoutes.js           # Forum (planned)
+│       ├── 📄 notificationRoutes.js    # Notifications (planned)
+│       ├── 📄 paymentRoutes.js         # Payments (planned)
+│       └── 📄 analyticsRoutes.js       # Analytics (planned)
+│
+├── 📁 frontend/                          # Frontend (React)
+│   ├── 📄 package.json                  # Frontend dependencies
+│   ├── 📄 Dockerfile                    # Frontend container
+│   │
+│   ├── 📁 public/                       # Static files
+│   │   ├── 📄 index.html               # HTML template
+│   │   └── 📄 manifest.json            # PWA manifest
+│   │
+│   ├── 📁 deployment/                   # Frontend deployment
+│   │   └── 📁 nginx/                   
+│   │       └── 📄 default.conf         # Nginx config
+│   │
+│   └── 📁 src/                          # Source code
+│       ├── 📄 index.js                 # Entry point
+│       ├── 📄 index.css                # Global styles
+│       ├── 📄 App.js                   # Main app component
+│       ├── 📄 i18n.js                  # Translations (EN/AR/FR)
+│       ├── �� serviceWorkerRegistration.js  # PWA
+│       │
+│       ├── 📁 components/              # Reusable components
+│       │   ├── 📄 Layout.js           # Page layout
+│       │   ├── 📄 Header.js           # Navigation header
+│       │   ├── 📄 Footer.js           # Page footer
+│       │   └── 📄 PrivateRoute.js     # Auth guard
+│       │
+│       ├── 📁 contexts/                # React contexts
+│       │   ├── 📄 AuthContext.js      # Authentication
+│       │   └── 📄 LanguageContext.js  # Multi-language
+│       │
+│       └── 📁 pages/                   # Page components
+│           ├── 📄 Home.js             # Homepage
+│           ├── 📄 Login.js            # Login page
+│           ├── 📄 Register.js         # Registration
+│           ├── 📄 Courses.js          # Course listing
+│           ├── 📄 CourseDetail.js     # Course details
+│           ├── 📄 CoursePlayer.js     # Course player
+│           ├── 📄 Dashboard.js        # User dashboard
+│           ├── 📄 MyCourses.js        # My courses
+│           ├── 📄 VerifyCertificate.js # Certificate verification
+│           ├── 📄 VerifyTrainer.js    # Trainer verification
+│           ├── 📄 About.js            # About page
+│           ├── 📄 Contact.js          # Contact page
+│           └── 📄 NotFound.js         # 404 page
+│
+├── 📁 docs/                             # Documentation
+│   ├── 📄 API.md                       # API documentation
+│   ├── 📄 DEPLOYMENT.md                # Deployment guide
+│   └── 📄 FEATURES.md                  # Feature list
+│
+├── 📁 deployment/                       # Deployment configs
+│   └── 📁 nginx/                       
+│       └── 📄 nginx.conf               # Nginx reverse proxy
+│
+├── 📁 mobile-app/                       # Mobile app documentation
+│   └── 📄 README.md                    # PWA/Mobile guide
+│
+└── 📁 scripts/                          # Helper scripts
+    └── 📄 setup.sh                     # Setup automation
+
+Key Technologies:
+- Backend: Node.js, Express, MongoDB, JWT, Socket.io
+- Frontend: React, Material-UI, i18next, Axios
+- DevOps: Docker, Docker Compose, Nginx
+- Languages: JavaScript (ES6+)
+- Database: MongoDB with Mongoose ODM
+
+Total Files: 80+ source files
+Lines of Code: 15,000+ lines
+Languages Supported: 3 (English, Arabic, French)

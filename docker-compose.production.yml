@@ -1,0 +1,83 @@
+services:
+  mongodb:
+    image: mongo:7.0.16-jammy
+    command: ["mongod","--replicaSet","rs0","--bind_ip_all","--auth","--keyFile","/run/secrets/mongo-keyfile"]
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?MONGO_ROOT_USERNAME is required}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?MONGO_ROOT_PASSWORD is required}
+      MONGO_INITDB_DATABASE: green_consulting
+    secrets: [mongo-keyfile]
+    volumes: [mongodb_data:/data/db]
+    networks: [private]
+    healthcheck:
+      test: ["CMD-SHELL","mongosh --quiet --username $$MONGO_INITDB_ROOT_USERNAME --password $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.adminCommand({ping:1}).ok' | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  mongo-init:
+    image: mongo:7.0.16-jammy
+    restart: "no"
+    depends_on:
+      mongodb: { condition: service_healthy }
+    environment:
+      MONGO_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:?MONGO_ROOT_USERNAME is required}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?MONGO_ROOT_PASSWORD is required}
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME:?MONGO_APP_USERNAME is required}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:?MONGO_APP_PASSWORD is required}
+    networks: [private]
+    volumes:
+      - ./deployment/mongo/init-app-user.js:/opt/green/init-app-user.js:ro
+    entrypoint: ["bash","-lc","mongosh --host mongodb:27017 --username $$MONGO_ROOT_USERNAME --password $$MONGO_ROOT_PASSWORD --authenticationDatabase admin --eval 'try{rs.status()}catch(e){rs.initiate({_id:"rs0",members:[{_id:0,host:"mongodb:27017"}]})}'; until mongosh --host mongodb:27017 --username $$MONGO_ROOT_USERNAME --password $$MONGO_ROOT_PASSWORD --authenticationDatabase admin --quiet --eval 'db.hello().isWritablePrimary' | grep true; do sleep 2; done; MONGO_APP_DATABASE=green_consulting mongosh --host mongodb:27017 --username $$MONGO_ROOT_USERNAME --password $$MONGO_ROOT_PASSWORD --authenticationDatabase admin --file /opt/green/init-app-user.js"]
+
+  backend:
+    build: { context: ./backend }
+    restart: unless-stopped
+    env_file: [./backend/.env.production]
+    environment:
+      MONGO_HOST: mongodb
+      MONGO_DB: green_consulting
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME:?MONGO_APP_USERNAME is required}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:?MONGO_APP_PASSWORD is required}
+    depends_on:
+      mongodb: { condition: service_healthy }
+      mongo-init: { condition: service_completed_successfully }
+    volumes:
+      - private_uploads:/app/private_uploads
+      - public_uploads:/app/public_uploads
+      - backups:/app/backups
+      - exports:/app/exports
+      - clamav_data:/var/lib/clamav
+    networks: [private, edge]
+    ports: ["127.0.0.1:5000:5000"]
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [SETUID, SETGID]
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: ${PUBLIC_API_URL:?PUBLIC_API_URL is required}
+        REACT_APP_MOODLE_URL: ${PUBLIC_MOODLE_URL:?PUBLIC_MOODLE_URL is required}
+    restart: unless-stopped
+    networks: [edge]
+    ports: ["127.0.0.1:8080:8080"]
+    read_only: true
+    tmpfs: [/var/cache/nginx, /var/run]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+networks:
+  private: { internal: true }
+  edge: {}
+volumes:
+  mongodb_data: {}
+  private_uploads: {}
+  public_uploads: {}
+  backups: {}
+  exports: {}
+  clamav_data: {}
+secrets:
+  mongo-keyfile:
+    file: ./deployment/secrets/mongo-keyfile

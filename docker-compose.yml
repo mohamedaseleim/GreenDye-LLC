@@ -1,0 +1,42 @@
+name: green-consulting-development
+services:
+  mongodb:
+    image: mongo:7.0.16-jammy
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-green_dev_root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-change-me-local-only}
+      MONGO_INITDB_DATABASE: green_consulting
+    ports: ["127.0.0.1:27017:27017"]
+    volumes: [mongodb_data:/data/db]
+    networks: [private]
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --username $$MONGO_INITDB_ROOT_USERNAME --password $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.adminCommand({ping:1}).ok' | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  backend:
+    build: { context: ./backend }
+    restart: unless-stopped
+    env_file: [./backend/.env]
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-green_dev_root}:${MONGO_ROOT_PASSWORD:-change-me-local-only}@mongodb:27017/green_consulting?authSource=admin
+    ports: ["127.0.0.1:5000:5000"]
+    depends_on:
+      mongodb: { condition: service_healthy }
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks: [private, edge]
+  frontend:
+    build: { context: ./frontend }
+    restart: unless-stopped
+    ports: ["127.0.0.1:3000:8080"]
+    depends_on: [backend]
+    networks: [edge]
+networks:
+  private: { internal: true }
+  edge: {}
+volumes:
+  mongodb_data: {}

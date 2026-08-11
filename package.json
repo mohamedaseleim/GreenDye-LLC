@@ -1,0 +1,31 @@
+{
+  "name": "greendye-training-consultancy",
+  "version": "1.8.0",
+  "description": "GreenDye for Training and Consultancy",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "quality": "node deployment/scripts/quality-gate.js && npm run acceptance",
+    "acceptance": "node deployment/scripts/acceptance-all.js"
+  },
+  "keywords": [
+    "education",
+    "lms",
+    "e-learning",
+    "training",
+    "academy"
+  ],
+  "author": "GreenDye for Training and Consultancy",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
