@@ -1,0 +1,9 @@
+const Trainer=require('../models/Trainer');
+const pick=require('../utils/pick');
+const editable=['fullName','professionalTitle','bio','experience','specializations','qualifications','certifications','accreditations','languages','country','city','profileImage','socialLinks','availability'];
+exports.getTrainers=async(req,res,next)=>{try{const data=await Trainer.find({isActive:true,isVerified:true}).select('-verificationDocuments -payoutDetails');res.json({success:true,data});}catch(e){next(e)}};
+exports.getTrainer=async(req,res,next)=>{try{const data=await Trainer.findById(req.params.id).select('-verificationDocuments -payoutDetails');if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true,data});}catch(e){next(e)}};
+exports.createTrainer=async(req,res,next)=>{try{const existing=await Trainer.findOne({user:req.user._id});if(existing)return res.status(409).json({success:false,message:'Trainer profile already exists'});const data=await Trainer.create({...pick(req.body,editable),user:req.user._id,applicationStatus:'pending',isVerified:false});res.status(201).json({success:true,data});}catch(e){next(e)}};
+exports.updateTrainer=async(req,res,next)=>{try{const data=await Trainer.findOneAndUpdate({_id:req.params.id,user:req.user._id},pick(req.body,editable),{new:true,runValidators:true});if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true,data});}catch(e){next(e)}};
+exports.deleteTrainer=async(req,res,next)=>{try{const data=await Trainer.findOneAndDelete({_id:req.params.id,user:req.user._id,isVerified:false});if(!data)return res.status(409).json({success:false,message:'Only an unverified profile owned by you can be deleted'});res.json({success:true});}catch(e){next(e)}};
+exports.verifyTrainer=async(req,res)=>res.status(403).json({success:false,message:'Trainer verification is an administrative action'});
