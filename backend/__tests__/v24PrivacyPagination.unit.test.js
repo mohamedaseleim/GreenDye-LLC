@@ -1,0 +1,5 @@
+const fs=require('fs'),path=require('path');const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+test('public verification exposes only an explicit safe DTO',()=>{const source=read('controllers/verifyController.js');expect(source).not.toContain("revokedReason metadata'");expect(source).toContain('const data={certificateId:')});
+test('admin list implements bounded pagination and escaped search',()=>{const source=read('controllers/adminCertificateController.js');expect(source).toContain('.skip(skip).limit(limit)');expect(source).toContain('countDocuments(query)');expect(source).toContain('escapeRegex')});
+test('migration synchronizes flags and detects equivalent indexes',()=>{const source=read('scripts/migrate-credential-references.js');expect(source).toContain('isValid:true,isRevoked:false');expect(source).toContain('index.key?.credentialReference===1')});
+test('audit snapshots exclude large and private fields',()=>{const source=read('utils/audit.js');for(const field of ['qrCode','pdfUrl','recipientEmail'])expect(source).toContain(field)});

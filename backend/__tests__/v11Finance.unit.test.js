@@ -1,0 +1,3 @@
+const {calculatePaymentTerms}=require('../utils/paymentTerms');const {calculateInvoice}=require('../utils/invoiceCalculator');
+test('payment term rounding always equals total',()=>{const t=calculatePaymentTerms([{percentage:33.33},{percentage:33.33},{percentage:33.34}],1,'USD');expect(t.reduce((n,x)=>n+x.amountMinor,0)).toBe(100)});
+test('JPY and KWD invoice minor units are correct',()=>{expect(calculateInvoice({currency:'JPY',items:[{description:'x',quantity:1,unitPrice:101}],taxRate:10}).totalMinor).toBe(111);expect(calculateInvoice({currency:'KWD',items:[{description:'x',quantity:1,unitPrice:1.234}],taxRate:0}).totalMinor).toBe(1234)});

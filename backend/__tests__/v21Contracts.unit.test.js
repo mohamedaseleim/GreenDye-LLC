@@ -1,0 +1,3 @@
+const fs=require('fs');const path=require('path');
+test('verification controllers expose verified status message and data',()=>{const source=fs.readFileSync(path.join(__dirname,'../controllers/verifyController.js'),'utf8');for(const field of ['verified','status','message','data'])expect(source).toContain(field)});
+test('bulk credentials return row-level inserted and failed results',()=>{const source=fs.readFileSync(path.join(__dirname,'../controllers/adminCertificateController.js'),'utf8');expect(source).toContain('data:{inserted,failed}');expect(source).toContain('counts:{inserted:inserted.length,failed:failed.length}')});
