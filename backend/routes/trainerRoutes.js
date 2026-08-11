@@ -1,2 +1,0 @@
-const router=require('express').Router(); const {protect,authorize}=require('../middleware/auth'); const c=require('../controllers/trainerController');
-router.route('/').get(c.getTrainers).post(protect,c.createTrainer); router.route('/:id').get(c.getTrainer).put(protect,c.updateTrainer).delete(protect,authorize('admin','super_admin'),c.deleteTrainer); router.put('/:id/verify',protect,authorize('admin','super_admin'),c.verifyTrainer); module.exports=router;

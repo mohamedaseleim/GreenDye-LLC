@@ -1,7 +1,0 @@
-const Trainer=require('../models/Trainer');
-exports.getTrainers=async(req,res,next)=>{try{const data=await Trainer.find({isActive:true,isVerified:true}).select('-verificationDocuments -payoutDetails');res.json({success:true,data});}catch(e){next(e)}};
-exports.getTrainer=async(req,res,next)=>{try{const data=await Trainer.findById(req.params.id).select('-verificationDocuments -payoutDetails');if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true,data});}catch(e){next(e)}};
-exports.createTrainer=async(req,res,next)=>{try{const data=await Trainer.create({...req.body,user:req.user._id});res.status(201).json({success:true,data});}catch(e){next(e)}};
-exports.updateTrainer=async(req,res,next)=>{try{const data=await Trainer.findOneAndUpdate({_id:req.params.id,user:req.user._id},req.body,{new:true,runValidators:true});if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true,data});}catch(e){next(e)}};
-exports.deleteTrainer=async(req,res,next)=>{try{const data=await Trainer.findByIdAndDelete(req.params.id);if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true});}catch(e){next(e)}};
-exports.verifyTrainer=async(req,res,next)=>{try{const data=await Trainer.findByIdAndUpdate(req.params.id,{isVerified:true,applicationStatus:'approved',verificationDate:new Date()},{new:true});if(!data)return res.status(404).json({success:false,message:'Trainer not found'});res.json({success:true,data});}catch(e){next(e)}};

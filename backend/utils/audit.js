@@ -1,1 +1,0 @@
-const Audit=require('../models/AuditTrail');exports.audit=async(req,action,resourceType,resourceId,before,after)=>Audit.create({user:req.user._id,action,resourceType,resourceId,details:`${action} ${resourceType}`,metadata:{before,after,userAgent:req.get('user-agent')},ipAddress:req.ip});
