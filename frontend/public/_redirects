@@ -1,0 +1,13 @@
+# Netlify redirects file for React SPA routing
+# This file ensures that all routes are served by index.html
+# except for API calls and static files
+
+# API requests should be proxied to backend (configure in Netlify dashboard)
+/api/*  https://api.greendye.org/api/:splat  200
+
+# Uploads and invoices should be proxied to backend
+/uploads/*  https://api.greendye.org/uploads/:splat  200
+/invoices/*  https://api.greendye.org/invoices/:splat  200
+
+# All other requests should serve index.html (SPA routing)
+/*  /index.html  200
