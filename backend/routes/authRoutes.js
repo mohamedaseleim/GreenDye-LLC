@@ -1,0 +1,16 @@
+const router = require('express').Router();
+const rateLimit = require('express-rate-limit');
+const { protect } = require('../middleware/auth');
+const c = require('../controllers/authController');
+const limiter = (max, minutes=15) => rateLimit({windowMs:minutes*60*1000,max,standardHeaders:true,legacyHeaders:false});
+router.post('/register', limiter(5,60), c.register);
+router.post('/login', limiter(10,15), c.login);
+router.post('/forgot-password', limiter(5,60), c.forgotPassword);
+router.post('/resend-verification', limiter(3,60), c.resendVerification);
+router.put('/reset-password/:resetToken', limiter(5,60), c.resetPassword);
+router.get('/verify-email/:token', limiter(20,60), c.verifyEmail);
+router.get('/logout', protect, c.logout);
+router.get('/me', protect, c.getMe);
+router.put('/profile', protect, c.updateProfile);
+router.put('/password', protect, limiter(5,60), c.updatePassword);
+module.exports = router;

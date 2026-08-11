@@ -1,0 +1,11 @@
+const router = require('express').Router();
+const { protect, authorize } = require('../middleware/auth');
+const c = require('../controllers/adminPaymentController');
+router.use(protect, authorize('admin', 'super_admin', 'finance'));
+router.get('/', c.getAllTransactions);
+router.get('/stats', c.getPaymentStats);
+router.get('/analytics/revenue', c.getRevenueAnalytics);
+router.get('/export', c.exportTransactions);
+router.get('/gateway-config', c.getGatewayConfig);
+router.put('/gateway-config', c.updateGatewayConfig);
+module.exports = router;

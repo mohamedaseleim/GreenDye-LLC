@@ -1,0 +1,14 @@
+const router = require('express').Router();
+const { protect, authorize } = require('../middleware/auth');
+const { getNotifications, markAsRead, markAllAsRead, deleteNotification, deleteAllRead, createNotification } = require('../controllers/notificationController');
+const { getNotificationPreferences, updateNotificationPreferences } = require('../controllers/notificationPreferencesController');
+router.use(protect);
+router.get('/preferences', getNotificationPreferences);
+router.put('/preferences', updateNotificationPreferences);
+router.get('/', getNotifications);
+router.put('/read-all', markAllAsRead);
+router.delete('/read', deleteAllRead);
+router.post('/', authorize('admin', 'super_admin'), createNotification);
+router.put('/:id/read', markAsRead);
+router.delete('/:id', deleteNotification);
+module.exports = router;
