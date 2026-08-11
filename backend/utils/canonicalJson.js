@@ -1,0 +1,1 @@
+const normalize=v=>{if(v===null||v===undefined)return v;if(v instanceof Date)return v.toISOString();if(Array.isArray(v))return v.map(normalize);if(typeof v==='object')return Object.keys(v).sort().reduce((o,k)=>(o[k]=normalize(v[k]),o),{});return v};exports.canonicalJson=v=>JSON.stringify(normalize(v));
