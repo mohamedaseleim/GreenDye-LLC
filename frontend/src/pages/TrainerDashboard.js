@@ -1,0 +1,2 @@
+import React from 'react';import {Container,Typography,Paper,Button,Stack} from '@mui/material';import {MOODLE_URL} from '../config';import {useTranslation} from 'react-i18next';
+export default function TrainerDashboard(){const{t}=useTranslation();return <Container sx={{py:6}}><Typography variant="h3">{t('trainerDashboard')}</Typography><Paper sx={{p:4,mt:3}}><Stack spacing={2}><Typography>{t('trainerDashboardDescription')}</Typography><Button variant="outlined" href={MOODLE_URL} target="_blank" rel="noreferrer">{t('goToLearning')}</Button></Stack></Paper></Container>}

@@ -1,0 +1,2 @@
+import React from 'react';import {Container,Typography,Button,Paper} from '@mui/material';import {MOODLE_URL} from '../config';import {useTranslation} from 'react-i18next';
+export default function LearningPlatform(){const{t}=useTranslation();return <Container sx={{py:8}}><Paper sx={{p:5,textAlign:'center'}}><Typography variant="h3">{t('educationTraining')}</Typography><Typography sx={{my:3}}>{t('moodleDescription')}</Typography><Button variant="contained" href={MOODLE_URL} target="_blank" rel="noreferrer">{t('goToLearning')}</Button></Paper></Container>}
